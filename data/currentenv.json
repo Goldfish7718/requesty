@@ -1,10 +1,5 @@
 {
   "projectName": "test",
   "baseUrl": "http://localhost:3000",
-  "requests": [
-    {
-      "type": "GET",
-      "route": "/"
-    }
-  ]
+  "requests": []
 }

@@ -1,8 +1,10 @@
 package subforms
 
 import (
+	"fmt"
 	"log"
 	"requesty/requests"
+	"requesty/utils"
 
 	"github.com/charmbracelet/huh"
 )
@@ -12,13 +14,12 @@ func RequestSubform() {
 	var route string
 	var save bool
 
-	// baseUrl := utils.GetBaseUrl()
-	baseUrl := "http://localhost:3000"
+	environment := utils.GetEnvironment()
 
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Select Request type").
+				Title(fmt.Sprintf("Select request type\nEnvironment name: %s\nBase URL: %s", environment.ProjectName, environment.BaseUrl)).
 				Options(
 					huh.NewOption("GET", "GET"),
 					huh.NewOption("POST", "POST"),
@@ -35,7 +36,7 @@ func RequestSubform() {
 		log.Fatal(err)
 	}
 
-	completeUrl := baseUrl + route
+	completeUrl := environment.BaseUrl + route
 
 	switch requestType {
 	case "GET":
@@ -64,6 +65,6 @@ func RequestSubform() {
 	}
 
 	if save {
-		requests.SaveRequest(requestType, route)
+		utils.SaveRequest(requestType, route)
 	}
 }

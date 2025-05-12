@@ -53,8 +53,8 @@ func main() {
 		case "new_request":
 			subforms.RequestSubform()
 
-		// case "perform_saved":
-		// 	projects.PerformSavedRequest()
+		case "perform_saved":
+			subforms.SavedRequestSubform()
 
 		case "manage_env":
 			subforms.EnvironmentSubform()

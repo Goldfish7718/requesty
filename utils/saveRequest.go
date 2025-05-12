@@ -1,4 +1,4 @@
-package requests
+package utils
 
 import (
 	"encoding/json"
@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"requesty/types"
-	"requesty/utils"
 
 	"github.com/charmbracelet/huh"
 )
@@ -15,7 +14,7 @@ import (
 func SaveRequest(reqType string, route string) {
 	var projectName string
 
-	options := utils.GetProjectsOptions()
+	options := GetProjectsOptions()
 	if len(options) == 0 {
 		fmt.Println("No saved environments found!")
 		return
