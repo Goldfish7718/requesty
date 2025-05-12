@@ -5,14 +5,10 @@ import (
 	"log"
 	"os"
 	"requesty/subforms"
+	"requesty/utils"
 
 	"github.com/charmbracelet/huh"
 )
-
-type Options struct {
-	Label huh.Option[string]
-	Value string
-}
 
 func main() {
 
@@ -35,14 +31,12 @@ func main() {
 	fmt.Println("Welcome to Requesty!")
 
 	for {
-		// environmentInfo := environment.GetEnvironmentInfo()
-		// if environmentInfo != "" {
-		// 	selectActionString = fmt.Sprintf("(%s) Select an action:", environmentInfo)
-		// } else {
-		// 	selectActionString = "Select an action:"
-		// }
-
-		selectActionString = "Select an action:"
+		environmentInfo := utils.GetEnvironment()
+		if environmentInfo.ProjectName != "" {
+			selectActionString = fmt.Sprintf("(%s) Select an action:", environmentInfo.ProjectName)
+		} else {
+			selectActionString = "Select an action:"
+		}
 
 		if err := huh.NewForm(
 			huh.NewGroup(

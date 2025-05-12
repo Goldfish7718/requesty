@@ -13,17 +13,6 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-// type Project struct {
-// 	ProjectName string    `json:"projectName"`
-// 	BaseUrl     string    `json:"baseUrl"`
-// 	Requests    []Request `json:"requests"`
-// }
-
-// type Request struct {
-// 	ReqType string `json:"type"`
-// 	Route   string `json:"route"`
-// }
-
 func New() {
 	var projectName string
 	var baseUrl string
@@ -290,4 +279,14 @@ func Select() {
 	if err != nil {
 		log.Fatal("Error writing file", err)
 	}
+}
+
+func Unselect() {
+	envPath := "data/currentenv.json"
+	err := os.Remove(envPath)
+	if err != nil {
+		log.Fatal("Error deleting file", err)
+	}
+
+	fmt.Println("Unselected current environment")
 }

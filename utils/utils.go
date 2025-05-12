@@ -2,13 +2,11 @@ package utils
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"requesty/types"
 	"strings"
 
 	"github.com/charmbracelet/huh"
@@ -53,23 +51,6 @@ func ParseResponseBody(resp *http.Response) string {
 	}
 
 	return string(body)
-}
-
-func GetEnvironment() types.Project {
-	var env types.Project
-
-	envPath := "data/currentenv.json"
-	data, err := os.ReadFile(envPath)
-	if err != nil {
-		log.Fatal("Error reading file", err)
-	}
-
-	err = json.Unmarshal(data, &env)
-	if err != nil {
-		log.Fatal("Error unmarshalling JSON", err)
-	}
-
-	return env
 }
 
 func GetProjectsOptions() []huh.Option[string] {

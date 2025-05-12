@@ -20,6 +20,7 @@ func EnvironmentSubform() {
 					huh.NewOption("Edit Environments", "edit"),
 					huh.NewOption("Delete Environment", "delete"),
 					huh.NewOption("Select Environment", "select"),
+					huh.NewOption("Unselect current Environment", "unselect"),
 				).
 				Value(&action),
 		),
@@ -42,5 +43,8 @@ func EnvironmentSubform() {
 
 	case "select":
 		environment.Select()
+
+	case "unselect":
+		environment.Unselect()
 	}
 }
