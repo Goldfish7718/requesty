@@ -217,7 +217,9 @@ func Edit() {
 func Delete() {
 	var projectToDelete string
 	var projectDeleteConfirm bool
+
 	projectOptions := utils.GetProjectsOptions()
+	currentEnvName := utils.GetEnvironment().ProjectName
 
 	if err := huh.NewForm(
 		huh.NewGroup(
@@ -234,6 +236,11 @@ func Delete() {
 		),
 	).Run(); err != nil {
 		log.Fatal(err)
+	}
+
+	if currentEnvName == projectToDelete {
+		fmt.Println("Cannot delete currently selected environment (Unselect first)")
+		return
 	}
 
 	if !projectDeleteConfirm {
@@ -254,6 +261,11 @@ func Delete() {
 func Select() {
 	var envName string
 	options := utils.GetProjectsOptions()
+
+	if len(options) == 0 {
+		fmt.Println("No saved environments!")
+		return
+	}
 
 	if err := huh.NewForm(
 		huh.NewGroup(
