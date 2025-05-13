@@ -14,35 +14,35 @@ import (
 )
 
 func SavedRequestSubform() {
-	projectName := utils.GetEnvironment().ProjectName
-	if projectName == "" {
+	environmentName := utils.GetEnvironment().EnvironmentName
+	if environmentName == "" {
 		fmt.Println("No environment selected!")
 		return
 	}
 
-	folderPath := "data/projects"
-	filePath := filepath.Join(folderPath, projectName+".json")
+	folderPath := "data/environments"
+	filePath := filepath.Join(folderPath, environmentName+".json")
 
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatal("Error reading file", err)
 	}
 
-	var project types.Project
+	var environment types.Environment
 	var requestOptions []huh.Option[int]
 	var requestIndex int
 
-	err = json.Unmarshal(data, &project)
+	err = json.Unmarshal(data, &environment)
 	if err != nil {
 		log.Fatal("Error Unmarshalling JSON", err)
 	}
 
-	if len(project.Requests) == 0 {
+	if len(environment.Requests) == 0 {
 		fmt.Println("No saved request found!")
 		return
 	}
 
-	for index, request := range project.Requests {
+	for index, request := range environment.Requests {
 		requestOption := fmt.Sprintf("%s %s", request.ReqType, request.Route)
 		requestOptions = append(requestOptions, huh.NewOption(requestOption, index))
 	}
@@ -50,7 +50,7 @@ func SavedRequestSubform() {
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[int]().
-				Title("Select request to perform:\nProject: " + projectName + "\nBase URL: " + project.BaseUrl).
+				Title("Select request to perform:\nEnvironment: " + environmentName + "\nBase URL: " + environment.BaseUrl).
 				Options(requestOptions...).
 				Value(&requestIndex),
 		),
@@ -58,8 +58,8 @@ func SavedRequestSubform() {
 		log.Fatal(err)
 	}
 
-	selectedRequest := project.Requests[requestIndex]
-	completeUrl := project.BaseUrl + selectedRequest.Route
+	selectedRequest := environment.Requests[requestIndex]
+	completeUrl := environment.BaseUrl + selectedRequest.Route
 
 	switch selectedRequest.ReqType {
 	case "GET":

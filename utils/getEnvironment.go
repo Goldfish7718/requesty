@@ -8,14 +8,14 @@ import (
 	"requesty/types"
 )
 
-func GetEnvironment() types.Project {
-	var environment types.Project
+func GetEnvironment() types.Environment {
+	var environment types.Environment
 	envPath := "data/currentenv.json"
 
 	file, err := os.ReadFile(envPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return types.Project{} // return empty project
+			return types.Environment{} // return empty environment
 		}
 		log.Fatal("Error reading file", err)
 	}

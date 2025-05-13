@@ -14,14 +14,14 @@ import (
 )
 
 func New() {
-	var projectName string
+	var environmentName string
 	var baseUrl string
 
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
-				Title("Enter Project name:").
-				Value(&projectName),
+				Title("Enter Environment name:").
+				Value(&environmentName),
 		),
 		huh.NewGroup(
 			huh.NewInput().
@@ -32,21 +32,21 @@ func New() {
 		log.Fatal(err)
 	}
 
-	project := types.Project{
-		ProjectName: projectName,
-		BaseUrl:     baseUrl,
-		Requests:    []types.Request{},
+	environment := types.Environment{
+		EnvironmentName: environmentName,
+		BaseUrl:         baseUrl,
+		Requests:        []types.Request{},
 	}
 
-	folderPath := "data/projects"
+	folderPath := "data/environments"
 
 	err := os.MkdirAll(folderPath, os.ModePerm)
 	if err != nil {
 		log.Fatal("Error creating directory", err)
 	}
 
-	filePath := filepath.Join(folderPath, projectName+".json")
-	fileData, err := json.MarshalIndent(project, "", "  ")
+	filePath := filepath.Join(folderPath, environmentName+".json")
+	fileData, err := json.MarshalIndent(environment, "", "  ")
 	if err != nil {
 		log.Fatal("❌ Error marshalling JSON:", err)
 	}
@@ -56,11 +56,11 @@ func New() {
 		log.Fatal("Error writing to file", err)
 	}
 
-	fmt.Printf("Succefully created project %s\n", projectName)
+	fmt.Printf("Succefully created environment %s\n", environmentName)
 }
 
 func View() {
-	folderPath := "data/projects"
+	folderPath := "data/environments"
 
 	files, err := os.ReadDir(folderPath)
 	if err != nil {
@@ -68,54 +68,54 @@ func View() {
 	}
 
 	if len(files) == 0 {
-		fmt.Println("No saved projects")
+		fmt.Println("No saved environments")
 		return
 	}
 
-	fmt.Println("Saved projects:")
+	fmt.Println("Saved environments:")
 	for index, file := range files {
-		projectName := strings.TrimSuffix(file.Name(), ".json")
-		fmt.Printf("%d. %s\n", index+1, projectName)
+		environmentName := strings.TrimSuffix(file.Name(), ".json")
+		fmt.Printf("%d. %s\n", index+1, environmentName)
 	}
 }
 
 func Edit() {
-	projectOptions := utils.GetProjectsOptions()
-	var projectToEdit string
+	environmentOptions := utils.GetEnvironmentsOptions()
+	var environmentToEdit string
 
-	if len(projectOptions) == 0 {
-		fmt.Println("No saved projects found")
+	if len(environmentOptions) == 0 {
+		fmt.Println("No saved environments found")
 		return
 	}
 
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Select project to Edit:").
-				Options(projectOptions...).
-				Value(&projectToEdit),
+				Title("Select environment to Edit:").
+				Options(environmentOptions...).
+				Value(&environmentToEdit),
 		),
 	).Run(); err != nil {
 		log.Fatal(err)
 	}
 
-	folderPath := "data/projects"
-	filePath := filepath.Join(folderPath, projectToEdit+".json")
+	folderPath := "data/environments"
+	filePath := filepath.Join(folderPath, environmentToEdit+".json")
 
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatal("Error reading file", err)
 	}
 
-	var project types.Project
+	var environment types.Environment
 
-	err = json.Unmarshal(data, &project)
+	err = json.Unmarshal(data, &environment)
 	if err != nil {
 		log.Fatal("Error unmarshalling JSON", err)
 	}
 
-	fmt.Printf("Project Name: %s\nBase URL: %s\nSaved requests: (%d)\n", project.ProjectName, project.BaseUrl, len(project.Requests))
-	for _, req := range project.Requests {
+	fmt.Printf("Environment Name: %s\nBase URL: %s\nSaved requests: (%d)\n", environment.EnvironmentName, environment.BaseUrl, len(environment.Requests))
+	for _, req := range environment.Requests {
 		fmt.Println("- ", req.ReqType, " ", req.Route)
 	}
 
@@ -126,7 +126,7 @@ func Edit() {
 			huh.NewSelect[string]().
 				Title("Select an action").
 				Options(
-					huh.NewOption("Change project name", "change_name"),
+					huh.NewOption("Change environment name", "change_name"),
 					huh.NewOption("Change Base URL", "change_base"),
 					huh.NewOption("Delete a request", "delete_req"),
 				).
@@ -142,7 +142,7 @@ func Edit() {
 		if err := huh.NewForm(
 			huh.NewGroup(
 				huh.NewInput().
-					Title("Enter new project name:").
+					Title("Enter new environment name:").
 					Value(&newName),
 			),
 		).Run(); err != nil {
@@ -158,32 +158,32 @@ func Edit() {
 			log.Fatal("Error renaming file", err)
 		}
 
-		project.ProjectName = newName
+		environment.EnvironmentName = newName
 
 	case "change_base":
 		var newBaseUrl string
 		if err := huh.NewForm(
 			huh.NewGroup(
 				huh.NewInput().
-					Title("Enter new project name:").
+					Title("Enter new environment name:").
 					Value(&newBaseUrl),
 			),
 		).Run(); err != nil {
 			log.Fatal(err)
 		}
 
-		project.BaseUrl = newBaseUrl
+		environment.BaseUrl = newBaseUrl
 
 	case "delete_req":
 		var options []huh.Option[int]
 		var requestIndexToDelete int
 
-		if len(project.Requests) == 0 {
+		if len(environment.Requests) == 0 {
 			fmt.Println("No saved requests found")
 			return
 		}
 
-		for index, req := range project.Requests {
+		for index, req := range environment.Requests {
 			options = append(options, huh.NewOption(fmt.Sprintf("- %s %s", req.ReqType, req.Route), index))
 		}
 
@@ -198,10 +198,10 @@ func Edit() {
 			log.Fatal(err)
 		}
 
-		project.Requests = append(project.Requests[:requestIndexToDelete], project.Requests[requestIndexToDelete+1:]...)
+		environment.Requests = append(environment.Requests[:requestIndexToDelete], environment.Requests[requestIndexToDelete+1:]...)
 	}
 
-	fileData, err := json.MarshalIndent(project, "", "  ")
+	fileData, err := json.MarshalIndent(environment, "", "  ")
 	if err != nil {
 		log.Fatal("❌ Error marshalling JSON:", err)
 	}
@@ -211,56 +211,56 @@ func Edit() {
 		log.Fatal("Error writing to file", err)
 	}
 
-	fmt.Println("Successfully edited project")
+	fmt.Println("Successfully edited environment")
 }
 
 func Delete() {
-	var projectToDelete string
-	var projectDeleteConfirm bool
+	var environmentToDelete string
+	var environmentDeleteConfirm bool
 
-	projectOptions := utils.GetProjectsOptions()
-	currentEnvName := utils.GetEnvironment().ProjectName
+	environmentOptions := utils.GetEnvironmentsOptions()
+	currentEnvName := utils.GetEnvironment().EnvironmentName
 
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Select project to delete:").
-				Options(projectOptions...).
-				Value(&projectToDelete),
+				Title("Select environment to delete:").
+				Options(environmentOptions...).
+				Value(&environmentToDelete),
 
 			huh.NewConfirm().
-				Title("Are you sure you want to delete this project?").
+				Title("Are you sure you want to delete this environment?").
 				Affirmative("Yes").
 				Negative("No").
-				Value(&projectDeleteConfirm),
+				Value(&environmentDeleteConfirm),
 		),
 	).Run(); err != nil {
 		log.Fatal(err)
 	}
 
-	if currentEnvName == projectToDelete {
+	if currentEnvName == environmentToDelete {
 		fmt.Println("Cannot delete currently selected environment (Unselect first)")
 		return
 	}
 
-	if !projectDeleteConfirm {
+	if !environmentDeleteConfirm {
 		return
 	}
 
-	folderPath := "data/projects"
-	filepath := filepath.Join(folderPath, projectToDelete+".json")
+	folderPath := "data/environments"
+	filepath := filepath.Join(folderPath, environmentToDelete+".json")
 
 	err := os.Remove(filepath)
 	if err != nil {
 		log.Fatal("Error deleting file", err)
 	}
 
-	fmt.Printf("\nProject %s deleted succesfully", projectToDelete)
+	fmt.Printf("\nEnvironment %s deleted succesfully", environmentToDelete)
 }
 
 func Select() {
 	var envName string
-	options := utils.GetProjectsOptions()
+	options := utils.GetEnvironmentsOptions()
 
 	if len(options) == 0 {
 		fmt.Println("No saved environments!")
@@ -278,7 +278,7 @@ func Select() {
 		log.Fatal(err)
 	}
 
-	folderPath := "data/projects"
+	folderPath := "data/environments"
 	envPath := filepath.Join("data/", "currentenv.json")
 	filePath := filepath.Join(folderPath, envName+".json")
 

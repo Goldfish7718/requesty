@@ -1,9 +1,9 @@
 package types
 
-type Project struct {
-	ProjectName string    `json:"projectName"`
-	BaseUrl     string    `json:"baseUrl"`
-	Requests    []Request `json:"requests"`
+type Environment struct {
+	EnvironmentName string    `json:"environmentName"`
+	BaseUrl         string    `json:"baseUrl"`
+	Requests        []Request `json:"requests"`
 }
 
 type Request struct {

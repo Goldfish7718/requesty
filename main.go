@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	folderPath := "data/projects"
+	folderPath := "data/environments"
 
 	err := os.MkdirAll(folderPath, os.ModePerm)
 	if err != nil {
@@ -32,8 +32,8 @@ func main() {
 
 	for {
 		environmentInfo := utils.GetEnvironment()
-		if environmentInfo.ProjectName != "" {
-			selectActionString = fmt.Sprintf("(%s) Select an action:", environmentInfo.ProjectName)
+		if environmentInfo.EnvironmentName != "" {
+			selectActionString = fmt.Sprintf("(%s) Select an action:", environmentInfo.EnvironmentName)
 		} else {
 			selectActionString = "Select an action:"
 		}

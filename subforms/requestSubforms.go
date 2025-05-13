@@ -19,7 +19,7 @@ func RequestSubform() {
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title(fmt.Sprintf("Select request type\nEnvironment name: %s\nBase URL: %s", environment.ProjectName, environment.BaseUrl)).
+				Title(fmt.Sprintf("Select request type\nEnvironment name: %s\nBase URL: %s", environment.EnvironmentName, environment.BaseUrl)).
 				Options(
 					huh.NewOption("GET", "GET"),
 					huh.NewOption("POST", "POST"),

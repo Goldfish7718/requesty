@@ -12,9 +12,9 @@ import (
 )
 
 func SaveRequest(reqType string, route string) {
-	var projectName string
+	var environmentName string
 
-	options := GetProjectsOptions()
+	options := GetEnvironmentsOptions()
 	if len(options) == 0 {
 		fmt.Println("No saved environments found!")
 		return
@@ -23,25 +23,25 @@ func SaveRequest(reqType string, route string) {
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Select project to save this request:").
+				Title("Select environment to save this request:").
 				Options(options...).
-				Value(&projectName),
+				Value(&environmentName),
 		),
 	).Run(); err != nil {
 		log.Fatal(err)
 	}
 
-	folderPath := "data/projects"
-	filePath := filepath.Join(folderPath, projectName+".json")
+	folderPath := "data/environments"
+	filePath := filepath.Join(folderPath, environmentName+".json")
 
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatal("Error reading file", err)
 	}
 
-	var project types.Project
+	var environment types.Environment
 
-	err = json.Unmarshal(data, &project)
+	err = json.Unmarshal(data, &environment)
 	if err != nil {
 		log.Fatal("Error Unmarshalling JSON", err)
 	}
@@ -51,9 +51,9 @@ func SaveRequest(reqType string, route string) {
 		Route:   route,
 	}
 
-	project.Requests = append(project.Requests, newRequest)
+	environment.Requests = append(environment.Requests, newRequest)
 
-	updatedData, err := json.MarshalIndent(project, "", "  ")
+	updatedData, err := json.MarshalIndent(environment, "", "  ")
 	if err != nil {
 		log.Fatal("Error marshalling data", err)
 	}
