@@ -297,7 +297,10 @@ func Unselect() {
 	envPath := "data/currentenv.json"
 	err := os.Remove(envPath)
 	if err != nil {
-		log.Fatal("Error deleting file", err)
+		if os.IsNotExist(err) {
+			fmt.Println("No environment currently selected")
+		}
+		log.Fatal("Error deleting current environment file ", err)
 	}
 
 	fmt.Println("Unselected current environment")
