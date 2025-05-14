@@ -13,13 +13,20 @@ func RequestSubform() {
 	var requestType string
 	var route string
 	var save bool
+	var firstTitle string = "Select request type\n"
+	var secondTitle string = "Enter full URL"
 
 	environment := utils.GetEnvironment()
+
+	if environment.EnvironmentName != "" {
+		firstTitle = fmt.Sprintf("Select request type\nEnvironment name: %s\nBase URL: %s", environment.EnvironmentName, environment.BaseUrl)
+		secondTitle = "Enter route"
+	}
 
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title(fmt.Sprintf("Select request type\nEnvironment name: %s\nBase URL: %s", environment.EnvironmentName, environment.BaseUrl)).
+				Title(firstTitle).
 				Options(
 					huh.NewOption("GET", "GET"),
 					huh.NewOption("POST", "POST"),
@@ -29,7 +36,7 @@ func RequestSubform() {
 				Value(&requestType),
 
 			huh.NewInput().
-				Title("Enter route (with trailing slash; appended to base URL)").
+				Title(secondTitle).
 				Value(&route),
 		),
 	).Run(); err != nil {

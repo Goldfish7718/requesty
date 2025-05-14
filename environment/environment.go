@@ -81,6 +81,8 @@ func View() {
 
 func Edit() {
 	environmentOptions := utils.GetEnvironmentsOptions()
+	currentEnvironment := utils.GetEnvironment()
+
 	var environmentToEdit string
 
 	if len(environmentOptions) == 0 {
@@ -100,6 +102,8 @@ func Edit() {
 	}
 
 	folderPath := "data/environments"
+	currentEnvPath := "data/currentenv.json"
+
 	filePath := filepath.Join(folderPath, environmentToEdit+".json")
 
 	data, err := os.ReadFile(filePath)
@@ -113,6 +117,8 @@ func Edit() {
 	if err != nil {
 		log.Fatal("Error unmarshalling JSON", err)
 	}
+
+	oldEnvironmentName := environment.EnvironmentName
 
 	fmt.Printf("Environment Name: %s\nBase URL: %s\nSaved requests: (%d)\n", environment.EnvironmentName, environment.BaseUrl, len(environment.Requests))
 	for _, req := range environment.Requests {
@@ -209,6 +215,13 @@ func Edit() {
 	err = os.WriteFile(filePath, fileData, 0644)
 	if err != nil {
 		log.Fatal("Error writing to file", err)
+	}
+
+	if oldEnvironmentName == currentEnvironment.EnvironmentName {
+		err = os.WriteFile(currentEnvPath, fileData, 0644)
+		if err != nil {
+			log.Fatal("Error writing to file", err)
+		}
 	}
 
 	fmt.Println("Successfully edited environment")
