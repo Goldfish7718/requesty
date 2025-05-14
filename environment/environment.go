@@ -268,7 +268,7 @@ func Delete() {
 		log.Fatal("Error deleting file", err)
 	}
 
-	fmt.Printf("\nEnvironment %s deleted succesfully", environmentToDelete)
+	fmt.Println("Environment " + environmentToDelete + " deleted succesfully")
 }
 
 func Select() {
