@@ -67,7 +67,13 @@ func Post(url string) {
 	}
 
 	if addBody == "y" {
-		reqBody = utils.AcceptRequestBody()
+		var err error
+		reqBody, err = utils.AcceptRequestBody()
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
@@ -106,7 +112,13 @@ func Put(url string) {
 	}
 
 	if addBody == "y" {
-		reqBody = utils.AcceptRequestBody()
+		var err error
+		reqBody, err = utils.AcceptRequestBody()
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 
 	req, err := http.NewRequest("PUT", url, reqBody)

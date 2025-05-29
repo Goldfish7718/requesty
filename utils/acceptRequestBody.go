@@ -2,13 +2,15 @@ package utils
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/chzyer/readline"
 )
 
-func AcceptRequestBody() *bytes.Buffer {
+func AcceptRequestBody() (*bytes.Buffer, error) {
 
 	var jsonStr string
 
@@ -32,9 +34,13 @@ func AcceptRequestBody() *bytes.Buffer {
 		jsonStr += line
 	}
 
-	fmt.Println("You entered:")
-	fmt.Println(jsonStr)
+	var js json.RawMessage
+
+	err = json.Unmarshal([]byte(jsonStr), &js)
+	if err != nil {
+		return nil, errors.New("Invialid JSON format")
+	}
 
 	reqBody := bytes.NewBuffer([]byte(jsonStr))
-	return reqBody
+	return reqBody, nil
 }
