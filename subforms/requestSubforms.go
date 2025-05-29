@@ -13,7 +13,7 @@ func RequestSubform() {
 	var requestType string
 	var route string
 	var save bool
-	var firstTitle string = "Select request type\n"
+	var firstTitle string = "Select request type empty"
 	var secondTitle string = "Enter full URL"
 
 	environment := utils.GetEnvironment()

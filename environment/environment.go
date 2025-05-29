@@ -234,6 +234,11 @@ func Delete() {
 	environmentOptions := utils.GetEnvironmentsOptions()
 	currentEnvName := utils.GetEnvironment().EnvironmentName
 
+	if len(environmentOptions) == 0 {
+		fmt.Println("No saved environments found!")
+		return
+	}
+
 	if err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
